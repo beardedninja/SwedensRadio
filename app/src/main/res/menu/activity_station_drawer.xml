@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/filter_all"
+            android:title="All"
+            android:checked="true"/>
+        <item
+            android:id="@+id/filter_local"
+            android:title="Local" />
+        <item
+            android:id="@+id/filter_national"
+            android:title="National" />
+        <item
+            android:id="@+id/filter_extra"
+            android:title="Extra" />
+    </group>
+
+</menu>
