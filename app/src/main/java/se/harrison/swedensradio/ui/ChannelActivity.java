@@ -1,10 +1,10 @@
 package se.harrison.swedensradio.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,15 +16,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
-import java.util.List;
-
 import se.harrison.swedensradio.R;
 import se.harrison.swedensradio.data.channel.Channel;
 import se.harrison.swedensradio.data.channel.ChannelDataSource;
-import se.harrison.swedensradio.data.channel.ChannelRemoteDataSource;
-import se.harrison.swedensradio.data.channel.ChannelRepository;
 
-public class StationActivity extends AppCompatActivity
+public class ChannelActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ChannelFragment.OnListFragmentInteractionListener {
 
     FloatingActionButton fab;
@@ -33,7 +29,7 @@ public class StationActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_station);
+        setContentView(R.layout.activity_channel);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -69,6 +65,8 @@ public class StationActivity extends AppCompatActivity
                     .commit();
 
         }
+
+        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
     }
 
     @Override
@@ -84,7 +82,7 @@ public class StationActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.station, menu);
+        getMenuInflater().inflate(R.menu.channel, menu);
         return true;
     }
 
@@ -122,6 +120,7 @@ public class StationActivity extends AppCompatActivity
 
         Fragment fragment = ChannelFragment.newInstance(arguments);
         getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
                 .replace(R.id.fragment_content, fragment)
                 .commit();
 
@@ -133,7 +132,8 @@ public class StationActivity extends AppCompatActivity
 
     @Override
     public void onListFragmentInteraction(Channel channel) {
-        Snackbar.make(fab, "Boop", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
+        Intent intent = new Intent();
+        intent.setClass(this, ScheduleActivity.class);
+        startActivity(intent);
     }
 }
