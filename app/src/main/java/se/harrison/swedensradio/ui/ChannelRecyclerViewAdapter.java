@@ -33,7 +33,7 @@ public class ChannelRecyclerViewAdapter extends RecyclerView.Adapter<ChannelRecy
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_channel, parent, false);
+                .inflate(R.layout.cell_channel, parent, false);
         return new ViewHolder(view);
     }
 

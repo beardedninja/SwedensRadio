@@ -83,7 +83,19 @@ public class ChannelRemoteDataSource implements ChannelDataSource {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                //callback.onChannelLoaded();
+                Channel channel = new Channel();
+
+                try {
+                    String body = response.body().string();
+                    if (response.code() == 200 && !TextUtils.isEmpty(body)) {
+                        JSONObject data = new JSONObject(body);
+                        channel = Channel.fromJSON(data.getJSONObject("channel"));
+                    }
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                    callback.onDataNotAvailable();
+                }
+                callback.onChannelLoaded(channel);
             }
         });
     }

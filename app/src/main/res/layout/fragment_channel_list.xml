@@ -8,4 +8,4 @@
     android:layout_height="match_parent"
     app:layoutManager="LinearLayoutManager"
     tools:context="se.harrison.swedensradio.ui.ChannelFragment"
-    tools:listitem="@layout/fragment_channel" />
+    tools:listitem="@layout/cell_channel" />

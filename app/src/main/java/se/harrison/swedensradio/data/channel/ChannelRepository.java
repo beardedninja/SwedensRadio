@@ -31,7 +31,7 @@ public class ChannelRepository implements ChannelDataSource {
     }
 
     @Override
-    public void getChannels(@NonNull ChannelFilter channelFilter, @NonNull final LoadChannelsCallback callback) {
+    public void getChannels(@NonNull final ChannelFilter channelFilter, @NonNull final LoadChannelsCallback callback) {
         if (channelFilter != currentFilter && cachedChannels != null) {
             cachedChannels.clear();
         }
@@ -40,6 +40,7 @@ public class ChannelRepository implements ChannelDataSource {
                 @Override
                 public void onChannelsLoaded(List<Channel> channels) {
                     refreshCache(channels);
+                    currentFilter = channelFilter;
                     callback.onChannelsLoaded(channels);
                 }
 

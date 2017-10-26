@@ -12,10 +12,12 @@ import org.json.JSONObject;
 public class Channel {
     private String id;
     private String name;
+
     private String imageUrl;
     private String color;
     private String liveAudioUrl;
     private String channelType;
+
 
     public String getId() {
         return id;
@@ -45,7 +47,7 @@ public class Channel {
         return !TextUtils.isEmpty(liveAudioUrl);
     }
 
-    public static Channel fromJSON(JSONObject json) {
+    static Channel fromJSON(JSONObject json) {
         if (json == null) return null;
 
         Channel channel = new Channel();

@@ -8,10 +8,10 @@
     tools:context="se.harrison.swedensradio.ui.ScheduleActivity"
     tools:showIn="@layout/activity_schedule">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
-        android:text="@string/large_text" />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/schedule_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layoutManager="LinearLayoutManager" />
 
 </android.support.v4.widget.NestedScrollView>

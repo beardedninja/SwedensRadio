@@ -2,10 +2,7 @@ package se.harrison.swedensradio.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -23,8 +20,8 @@ import se.harrison.swedensradio.data.channel.ChannelDataSource;
 public class ChannelActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ChannelFragment.OnListFragmentInteractionListener {
 
-    FloatingActionButton fab;
     FrameLayout fragmentContent;
+    ChannelDataSource.ChannelFilter currentFilter = ChannelDataSource.ChannelFilter.all;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,15 +29,6 @@ public class ChannelActivity extends AppCompatActivity
         setContentView(R.layout.activity_channel);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -54,10 +42,8 @@ public class ChannelActivity extends AppCompatActivity
         fragmentContent = (FrameLayout) findViewById(R.id.fragment_content);
 
         if (savedInstanceState == null) {
-            // Create the detail fragment and add it to the activity
-            // using a fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putInt("filter", ChannelDataSource.ChannelFilter.all.ordinal());
+            arguments.putInt("filter", currentFilter.ordinal());
             Fragment fragment = ChannelFragment.newInstance(arguments);
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
@@ -65,8 +51,12 @@ public class ChannelActivity extends AppCompatActivity
                     .commit();
 
         }
+    }
 
-        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("filter", currentFilter.ordinal());
     }
 
     @Override
@@ -109,14 +99,15 @@ public class ChannelActivity extends AppCompatActivity
 
         Bundle arguments = new Bundle();
         if (id == R.id.filter_all) {
-            arguments.putInt("filter", ChannelDataSource.ChannelFilter.all.ordinal());
+            currentFilter = ChannelDataSource.ChannelFilter.all;
         } else if (id == R.id.filter_local) {
-            arguments.putInt("filter", ChannelDataSource.ChannelFilter.local.ordinal());
+            currentFilter =  ChannelDataSource.ChannelFilter.local;
         } else if (id == R.id.filter_national) {
-            arguments.putInt("filter", ChannelDataSource.ChannelFilter.national.ordinal());
+            currentFilter =  ChannelDataSource.ChannelFilter.national;
         } else if (id == R.id.filter_extra) {
-            arguments.putInt("filter", ChannelDataSource.ChannelFilter.extra.ordinal());
+            currentFilter =  ChannelDataSource.ChannelFilter.extra;
         }
+        arguments.putInt("filter", currentFilter.ordinal());
 
         Fragment fragment = ChannelFragment.newInstance(arguments);
         getSupportFragmentManager().beginTransaction()
@@ -133,7 +124,12 @@ public class ChannelActivity extends AppCompatActivity
     @Override
     public void onListFragmentInteraction(Channel channel) {
         Intent intent = new Intent();
+        Bundle bundle = new Bundle();
+        bundle.putString("channel_id", channel.getId());
+        intent.putExtras(bundle);
         intent.setClass(this, ScheduleActivity.class);
         startActivity(intent);
+
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 }

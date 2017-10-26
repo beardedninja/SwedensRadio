@@ -2,6 +2,7 @@ package se.harrison.swedensradio.ui;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,10 +24,12 @@ public class ChannelFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     private int mColumnCount = 2;
     private OnListFragmentInteractionListener mListener;
+
     private ChannelRepository channelRepository = ChannelRepository.getInstance(new ChannelRemoteDataSource());
     private List<Channel> channels = new ArrayList<>();
-    private RecyclerView recyclerView;
     private ChannelDataSource.ChannelFilter currentFilter = ChannelDataSource.ChannelFilter.all;
+
+    private RecyclerView recyclerView;
 
     public ChannelFragment() {
     }
@@ -43,11 +46,17 @@ public class ChannelFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
+        if (savedInstanceState != null) {
+            currentFilter = ChannelDataSource.ChannelFilter.valueOf(savedInstanceState.getString("filter"));
+        } else if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
             currentFilter = ChannelDataSource.ChannelFilter.values()[getArguments().getInt("filter")];
         }
 
+        fetchChannels();
+    }
+
+    private void fetchChannels() {
         channelRepository.getChannels(currentFilter, new ChannelDataSource.LoadChannelsCallback() {
             @Override
             public void onChannelsLoaded(List<Channel> channels) {
@@ -56,7 +65,7 @@ public class ChannelFragment extends Fragment {
 
             @Override
             public void onDataNotAvailable() {
-
+                // Snackbar with data error message
             }
         });
     }
@@ -81,6 +90,21 @@ public class ChannelFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("filter", currentFilter.name());
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null) {
+            currentFilter = ChannelDataSource.ChannelFilter.valueOf(savedInstanceState.getString("filter", "all"));
+        }
+        fetchChannels();
+    }
+
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnListFragmentInteractionListener) {
@@ -92,14 +116,15 @@ public class ChannelFragment extends Fragment {
     }
 
     public void setChannels(final List<Channel> channels) {
-        this.getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (recyclerView != null)
-                    ((ChannelRecyclerViewAdapter) recyclerView.getAdapter()).updateChannels(channels);
-            }
-        });
-
+        if (!isDetached()) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (recyclerView != null)
+                        ((ChannelRecyclerViewAdapter) recyclerView.getAdapter()).updateChannels(channels);
+                }
+            });
+        }
     }
 
     @Override
